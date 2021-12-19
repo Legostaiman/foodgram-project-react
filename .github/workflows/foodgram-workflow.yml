@@ -70,7 +70,4 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            sudo groupadd docker
-            sudo usermod -aG docker $USER
-            sudo newgrp docker
             sudo docker-compose down && docker-compose build --pull && docker-compose up -d
