@@ -10,7 +10,7 @@ services:
     restart: always
 
   backend:
-    image: legostaiman/foodgram_backend:latest
+    image: warderus/foodgram_backend:latest
     restart: always
     depends_on:
       - db
@@ -21,7 +21,7 @@ services:
     - ./.env
 
   frontend:
-    image: legostaiman/foodgram_frontend:latest
+    image: warderus/foodgram_frontend:latest
     volumes:
       - ./frontend/:/app/result_build/
     depends_on:
