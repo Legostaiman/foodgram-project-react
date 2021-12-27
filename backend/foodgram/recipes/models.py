@@ -49,7 +49,10 @@ class Recipe(models.Model):
         verbose_name='Ингредиенты'
     )
     tags = models.ManyToManyField(
-        Tag, related_name='recipes', verbose_name='Теги')
+        Tag,
+        related_name='recipes',
+        verbose_name='Теги'
+    )
     cooking_time = models.IntegerField(
         'Время приготовления в минутах', validators=[MinValueValidator(1)])
 
@@ -61,6 +64,11 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    def display_ingredient(self):
+        return ', '.join(ingredient.name for ingredient in self.ingredients.all()[:3])
+
+    display_ingredient.short_description = 'Ингредиенты'
+
 
 class Amount(models.Model):
     recipe = models.ForeignKey(
@@ -71,8 +79,8 @@ class Amount(models.Model):
         'Количество', validators=[MinValueValidator(1)])
 
     class Meta:
-        verbose_name = 'Количество'
-        verbose_name_plural = 'Количество'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиент'
         constraints = [
             models.UniqueConstraint(fields=['recipe', 'ingredient'],
                                     name='unique amount')

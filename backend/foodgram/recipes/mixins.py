@@ -1,7 +1,7 @@
 from rest_framework import mixins, viewsets
 
 
-class CustomViewSet(
+class ReadOnlyViewSet(
         mixins.ListModelMixin,
         mixins.RetrieveModelMixin,
         viewsets.GenericViewSet):

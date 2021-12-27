@@ -4,9 +4,14 @@ from .models import (Amount, Favorite, Ingredient, Recipe, ShoppingCart,
                      Subscribe, Tag)
 
 
+class IngredientInlineAdmin(admin.TabularInline):
+    model = Amount
+
+
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'followers')
+    list_display = ('name', 'author', 'followers', 'display_ingredient')
     list_filter = ('author', 'name', 'tags__name')
+    inlines = [IngredientInlineAdmin, ]
 
     def followers(self, obj):
         return obj.favorite_recipe.all().count()

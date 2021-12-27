@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import views, uttils
 
 router = DefaultRouter()
 router.register('ingredients', views.IngredientsViewSet,
@@ -25,6 +25,6 @@ urlpatterns = [
              {'get': 'create', 'delete': 'destroy'}),
          name='shopping_cart'),
     path('recipes/download_shopping_cart/',
-         views.download_shopping_cart, name='download'),
+         uttils.download_shopping_cart, name='download'),
     path('', include(router.urls)),
 ]
