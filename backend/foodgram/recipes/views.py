@@ -58,6 +58,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     pagination_class = FoodgramPagination
     lookup_field = 'author_id'
 
+    @property
     def get_queryset(self):
         user = self.request.user
         return Subscribe.objects.filter(user=user)
@@ -69,7 +70,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         user = self.request.user
         author = get_object_or_404(User, pk=self.kwargs.get('author_id'))
-        follow = get_object_or_404(Subscribe, user=user, author=author)
+        follow = user.follower.get(author=author)
         follow.delete()
 
 
@@ -89,7 +90,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipe_id'))
-        favorite = get_object_or_404(Favorite, user=user, recipe=recipe)
+        favorite = user.favorite_user.get(recipe=recipe)
         favorite.delete()
 
 
@@ -109,5 +110,5 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         user = self.request.user
         recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipe_id'))
-        favorite = get_object_or_404(ShoppingCart, user=user, recipe=recipe)
+        favorite = user.in_shopping_cart.get(recipe=recipe)
         favorite.delete()
