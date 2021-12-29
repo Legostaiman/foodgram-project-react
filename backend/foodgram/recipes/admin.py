@@ -15,6 +15,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def followers(self, obj):
         return obj.favorite_recipe.all().count()
+
     followers.short_description = 'Добавлен в избранное'
 
 
@@ -28,15 +29,9 @@ class AmountAmin(admin.ModelAdmin):
 
 
 admin.site.register(Ingredient, IngredientAdmin)
-
 admin.site.register(Recipe, RecipeAdmin)
-
 admin.site.register(Tag)
-
 admin.site.register(Amount, AmountAmin)
-
 admin.site.register(Subscribe)
-
 admin.site.register(Favorite)
-
 admin.site.register(ShoppingCart)

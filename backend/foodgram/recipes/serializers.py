@@ -2,6 +2,8 @@ from django.core.paginator import Paginator
 from django.db.models import F
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
+from django.conf import settings
 
 from users.serializers import CustomUserSerializer
 from .models import (Amount, Favorite, Ingredient, Recipe, ShoppingCart,
@@ -204,6 +206,13 @@ class SubscribeSerializer(serializers.ModelSerializer):
         model = Subscribe
         fields = ('email', 'id', 'username', 'first_name',
                   'last_name', 'is_subscribed', 'recipes', 'recipes_count')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=['user', 'author'],
+                message='Вы уже подписаны на этого пользователя.'
+            )
+        ]
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
@@ -215,7 +224,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         queryset = obj.author.recipes.all()
         page_size = self.context['request'].query_params.get(
-            'recipes_limit', 6)
+            'recipes_limit', settings.RECIPES_LIMIT)
         paginator = Paginator(queryset, page_size)
         serializer = RecipeShortSerializer(paginator, many=True,)
         return serializer.data
@@ -232,9 +241,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
         if user.id == author_id:
             raise serializers.ValidationError(
                 'Нельзя подписаться на самого себя.')
-        if Subscribe.objects.filter(user=user.id, author=author_id).exists():
-            raise serializers.ValidationError(
-                'Вы уже подписаны на этого пользователя.')
         return data
 
 
@@ -248,15 +254,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('id', 'name', 'image', 'cooking_time')
-
-    def validate(self, data):
-        user = self.context['request'].user
-        recipe_id = self.context.get('view').kwargs.get('recipe_id')
-
-        if Favorite.objects.filter(user=user.id, recipe=recipe_id).exists():
-            raise serializers.ValidationError(
-                'Этот рецепт уже в избранном.')
-        return data
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Favorite.objects.all(),
+                fields=['user', 'recipe'],
+                message='Этот рецепт уже в избранном.'
+            )
+        ]
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -269,13 +273,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('id', 'name', 'image', 'cooking_time')
-
-    def validate(self, data):
-        user = self.context['request'].user
-        recipe_id = self.context.get('view').kwargs.get('recipe_id')
-
-        if ShoppingCart.objects.filter(
-                user=user.id, recipe=recipe_id).exists():
-            raise serializers.ValidationError(
-                'Этот рецепт уже в списке покупок.')
-        return data
+        validators = [
+            UniqueTogetherValidator(
+                queryset=ShoppingCart.objects.all(),
+                fields=['user', 'recipe'],
+                message='Этот рецепт уже в списке покупок.'
+            )
+        ]

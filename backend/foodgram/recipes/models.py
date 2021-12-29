@@ -65,7 +65,8 @@ class Recipe(models.Model):
         return self.name
 
     def display_ingredient(self):
-        return ', '.join(ingredient.name for ingredient in self.ingredients.all()[:3])
+        return ', '.join(
+            ingredient.name for ingredient in self.ingredients.all()[:3])
 
     display_ingredient.short_description = 'Ингредиенты'
 

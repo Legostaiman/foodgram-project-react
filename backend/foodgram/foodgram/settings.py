@@ -146,3 +146,5 @@ DJOSER = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+RECIPES_LIMIT = 6

@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
-from .permissions import IsAuthor
-from .models import (Amount, Recipe)
 from django.db.models import Sum
 from django.http import HttpResponse
+
+from .permissions import IsAuthor
+from .models import (Amount, Recipe)
 
 
 @api_view(['GET'])
