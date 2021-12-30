@@ -56,12 +56,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribeSerializer
     permission_classes = [SubscribePermission, ]
     pagination_class = FoodgramPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user']
     lookup_field = 'author_id'
-
-    @property
-    def get_queryset(self):
-        user = self.request.user
-        return Subscribe.objects.filter(user=user)
 
     def perform_create(self, serializer):
         author = get_object_or_404(User, pk=self.kwargs.get('author_id'))
@@ -77,11 +74,9 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     permission_classes = [IsAuthenticated, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user']
     lookup_field = 'recipe_id'
-
-    def get_queryset(self):
-        user = self.request.user
-        return Favorite.objects.filter(user=user)
 
     def perform_create(self, serializer):
         recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipe_id'))
@@ -97,11 +92,9 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 class ShoppingCartViewSet(viewsets.ModelViewSet):
     serializer_class = ShoppingCartSerializer
     permission_classes = [IsAuthenticated, ]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['user']
     lookup_field = 'recipe_id'
-
-    def get_queryset(self):
-        user = self.request.user
-        return ShoppingCart.objects.filter(user=user)
 
     def perform_create(self, serializer):
         recipe = get_object_or_404(Recipe, pk=self.kwargs.get('recipe_id'))
